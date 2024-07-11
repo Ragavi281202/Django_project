@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f9fc;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    header,
+    footer {
+        background-color: #053657;
+        color: white;
+        text-align: center;
+        padding: 1rem 0;
+    }
+
+    .container {
+        flex: 1;
+        padding: 20px;
+        max-width: 800px;
+        margin: auto;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        border-radius: 8px;
+    }
+
+    .section-title {
+        font-size: 1.5em;
+        color: #333;
+        border-bottom: 2px solid #053657;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+
+    .content {
+        margin-left: 20px;
+    }
+
+    .book-details {
+        margin-bottom: 20px;
+    }
+
+    .book-details div {
+        margin: 5px 0;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        padding: 0;
+    }
+
+    .pagination li {
+        margin: 0 5px;
+    }
+
+    .pagination a {
+        color: #053657;
+        text-decoration: none;
+        padding: 5px 10px;
+        border: 1px solid #053657;
+        border-radius: 5px;
+    }
+
+    .pagination a.active {
+        background-color: #053657;
+        color: white;
+    }
+
+    .pagination .disabled {
+        color: grey;
+        pointer-events: none;
+    }
+</style>
+
+<body>
+    <header>
+        <h1>Book Details</h1>
+    </header>
+    <div class="container">
+        <h2>Searched Data</h2>
+        {% if book_name == "Invalid" %}
+            <h2>Invalid data</h2>
+        {% else %}
+            {% for book in book_name %}
+            <div class="book-details">
+                <div class="section-title">Book Details</div>
+                <div class="content">
+                    <div><strong>Title:</strong> {{ book.0 }}</div>
+                    <div><strong>Author:</strong> {{ book.1 }}</div>
+                    <div><strong>Genres:</strong> {{ book.2 }}</div>
+                    <div><strong>Rating:</strong> {{ book.3 }}</div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <ul class="pagination">
+                {% if book_name.has_previous %}
+                    <li><a href="?page=1&category={{ option }}&query={{ query }}">&laquo; First</a></li>
+                    <li><a href="?page={{ book_name.previous_page_number }}&category={{ option }}&query={{ query }}">&lsaquo; Previous</a></li>
+                {% else %}
+                    <li class="disabled">&laquo; First</li>
+                    <li class="disabled">&lsaquo; Previous</li>
+                {% endif %}
+
+                {% for num in book_name.paginator.page_range %}
+                    {% if book_name.number == num %}
+                        <li><a class="active">{{ num }}</a></li>
+                    {% elif num > book_name.number|add:-3 and num < book_name.number|add:3 %}
+                        <li><a href="?page={{ num }}&category={{ option }}&query={{ query }}">{{ num }}</a></li>
+                    {% elif num == 1 %}
+                        <li><a href="?page={{ num }}&category={{ option }}&query={{ query }}">{{ num }}</a></li>
+                    {% elif num == book_name.paginator.num_pages %}
+                        <li><a href="?page={{ num }}&category={{ option }}&query={{ query }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if book_name.has_next %}
+                    <li><a href="?page={{ book_name.next_page_number }}&category={{ option }}&query={{ query }}">Next &rsaquo;</a></li>
+                    <li><a href="?page={{ book_name.paginator.num_pages }}&category={{ option }}&query={{ query }}">Last &raquo;</a></li>
+                {% else %}
+                    <li class="disabled">Next &rsaquo;</li>
+                    <li class="disabled">Last &raquo;</li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+</body>
+
+</html>
